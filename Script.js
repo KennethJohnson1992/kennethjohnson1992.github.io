@@ -1,4 +1,3 @@
-
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -234,6 +233,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const cards = document.querySelectorAll('[data-pixelated-image-reveal]');
   // Detect if device is touch device
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia("(pointer: coarse)").matches;
+  
+  // Debug: Log device detection
+  console.log('Touch device detected:', isTouchDevice);
+  console.log('ontouchstart in window:', 'ontouchstart' in window);
+  console.log('maxTouchPoints:', navigator.maxTouchPoints);
+  console.log('pointer: coarse match:', window.matchMedia("(pointer: coarse)").matches);
+  
   // Loop through each card
   cards.forEach((card) => {
     const pixelGrid = card.querySelector('[data-pixelated-image-reveal-grid]');
@@ -259,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let isActive = false; // Variable to track if the card is active
     let delayedCall;
     const animatePixels = (activate) => {
+      console.log('animatePixels called with:', activate); // Debug log
       isActive = activate;
       gsap.killTweensOf(pixels); // Reset any ongoing animations
       if (delayedCall) {
@@ -295,17 +302,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     };
-    if (isTouchDevice) {
-      // For touch devices, use click event
-      card.addEventListener('click', () => {
-        animatePixels(!isActive);
-      });
-    } else {
-      // For non-touch devices, use mouseenter and mouseleave
+    
+    // Force hover behavior for desktop (ignore touch device detection)
+    if (window.innerWidth > 768) {
+      // For desktop devices, use mouseenter only
+      console.log('Using hover behavior for desktop');
       card.addEventListener('mouseenter', () => {
+        console.log('Mouse enter detected'); // Debug log
         if (!isActive) {
           animatePixels(true);
         }
+      });
+    } else {
+      // For mobile devices, use click event
+      console.log('Using click behavior for mobile');
+      card.addEventListener('click', () => {
+        console.log('Click detected'); // Debug log
+        animatePixels(!isActive);
       });
     }
   });
